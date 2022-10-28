@@ -1,26 +1,14 @@
-import json
-import os
+import argparse
+from byjove import convert_file
+from byjove.utils import build_arg_parser, build_config_from_args
 
 
-class Converter:
-    def __init__(self, notebook_string):
-        self._parsed = json.loads(notebook_string)
-
-    @property
-    def md(self):
-        output = ""
-        placeholders = False
-        for block in self._parsed["cells"]:
-            if block["cell_type"] == "markdown":
-                content = block["source"]
-                if "{code}" in content:
-                    placeholders = True
-                else
-            elif block["cell_type"] == "code":
-                if placeholders:
-                    content
+def convert():
+    arg_parser = build_arg_parser()
+    parsed_namespace = arg_parser.parse_args()
+    config = build_config_from_args(parsed_namespace)
+    convert_file(config)
 
 
 if __name__ == "__main__":
-    with open("../notebooks/basic_test.ipynb", "r") as nb:
-        loaded_string = nb.read()
+    convert()

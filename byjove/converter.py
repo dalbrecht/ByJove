@@ -1,13 +1,8 @@
-import argparse
 import nbformat
 import os
 import base64
+from typing import Dict
 
-config = {
-    "output_path": "../output/tests/rendered/",
-    "resource_path": "resources",
-    "asset_counter": 0,
-}
 
 ASSET_COUNTER = 0
 
@@ -61,14 +56,9 @@ def convert_cell(cell, config, forward_include: bool = False):
         return convert_code_cell(cell, forward_include, config)
 
 
-def convert_file(path: str, file_name=None, version=4):
-    if file_name is None:
-        file_name = path.split(os.pathsep)[-1]
-        config["file_name"] = os.path.splitext(file_name)[0]
-    else:
-        config["file_name"] = file_name
-    with open(path) as f:
-        notebook = nbformat.read(f, as_version=version)
+def convert_file(config: Dict):
+    with open(config["path"]) as f:
+        notebook = nbformat.read(f, as_version=config["version"])
     out = ""
     forward = False
     for cell in notebook["cells"]:
@@ -77,9 +67,5 @@ def convert_file(path: str, file_name=None, version=4):
         )
         out = out + md_str
 
-    out_file_name = file_name + ".md"
-    with open(os.path.join(config["output_path"], out_file_name), "w") as o:
+    with open(os.path.join(config["output_path"], config["output_file"]), "w") as o:
         o.write(out)
-
-
-convert_file("../notebooks/basic_test.ipynb", "basic_test")
